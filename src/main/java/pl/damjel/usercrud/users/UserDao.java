@@ -7,14 +7,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserDao {
     private static final String INSERT_USER = "INSERT INTO users (first_name, last_name, email, phone, " +
             "city, zip_code, street, street_number, pass) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
-    private static final String QUERY_SHOW_USERS = "SELECT * FROM users;";
+    private static final String QUERY_SHOW_USERS = "SELECT id FROM users;";
     private static final String QUERY_SHOW_USER_BY_ID = "SELECT * FROM users WHERE id = ?;";
     private static final String UPDATE_USER_BY_ID = "UPDATE users\n" +
-            "SET first_name = ?, last_name = ?, email = ?, phone = ?, city = ?, zip_code = ?, street = ?, street_number = ?\n" +
+            "SET first_name = ?, last_name = ?, email = ?, phone = ?, city = ?, zip_code = ?, " +
+            "street = ?, street_number = ?\n" +
             "WHERE id = ?;";
     private static final String UPDATE_USER_PASS_BY_ID = "UPDATE users\n" +
             "SET pass = ?\n" +
@@ -73,6 +76,37 @@ public class UserDao {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
             return null;
+        }
+    }
+
+    protected List<User> readUsers() {
+        List<User> users = new ArrayList<>();
+        try (PreparedStatement preparedStatement = DbUtil.getConnection().prepareStatement(QUERY_SHOW_USERS);
+             ResultSet rsUser = preparedStatement.executeQuery()) {
+            while (rsUser.next()) {
+                users.add(readUser(rsUser.getInt("id")));
+            }
+            return users;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            return null;
+        }
+    }
+
+    protected void updateUser(User user) {
+        try (PreparedStatement preparedStatement = DbUtil.getConnection().prepareStatement(UPDATE_USER_BY_ID)) {
+            preparedStatement.setString(1, user.getFirst_name());
+            preparedStatement.setString(2, user.getLast_name());
+            preparedStatement.setString(3, user.getEmail());
+            preparedStatement.setString(4, user.getPhone());
+            preparedStatement.setString(5, user.getCity());
+            preparedStatement.setString(6, user.getZipCode());
+            preparedStatement.setString(7, user.getStreet());
+            preparedStatement.setString(8, user.getStreetNumber());
+            preparedStatement.setInt(9, user.getId());
+            preparedStatement.executeUpdate();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
     }
 }
