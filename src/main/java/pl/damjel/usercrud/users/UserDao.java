@@ -28,9 +28,9 @@ public class UserDao {
         return BCrypt.hashpw(pass, BCrypt.gensalt());
     }
 
-    protected Boolean readPass(int userId, String enteredPass) {
-//        enter the missing code here
-        return null;
+    protected Boolean checkPass(int userId, String enteredPass) {
+        User user = readUser(userId);
+        return BCrypt.checkpw(enteredPass, user.getPass());
     }
 
     protected User createUser(User user) {
@@ -105,6 +105,27 @@ public class UserDao {
             preparedStatement.setString(8, user.getStreetNumber());
             preparedStatement.setInt(9, user.getId());
             preparedStatement.executeUpdate();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    protected void updateUserPass(int id, String oldPass, String newPass) {
+        try (PreparedStatement preparedStatement = DbUtil.getConnection().prepareStatement(UPDATE_USER_PASS_BY_ID)) {
+            if (checkPass(id, oldPass) && !checkPass(id, newPass)) {
+                preparedStatement.setString(1, newPass);
+                preparedStatement.setInt(2, id);
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    protected void deleteUser(int id) {
+        try (PreparedStatement preparedStatement = DbUtil.getConnection().prepareStatement(DELETE_USER_BY_ID)) {
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeQuery();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
