@@ -1,5 +1,7 @@
 package pl.damjel.usercrud.utils;
 
+import lombok.SneakyThrows;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -10,7 +12,7 @@ import java.sql.SQLException;
 public class DbUtil {
     private static DataSource dataSource;
     public static Connection getConnection() throws SQLException {
-            return getInstance().getConnection();
+        return getInstance().getConnection();
     }
 
     private static DataSource getInstance() {

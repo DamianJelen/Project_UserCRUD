@@ -3,10 +3,7 @@ package pl.damjel.usercrud.users;
 import org.mindrot.jbcrypt.BCrypt;
 import pl.damjel.usercrud.utils.DbUtil;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,16 +21,16 @@ public class UserDao {
             "WHERE id = ?;";
     private static final String DELETE_USER_BY_ID = "DELETE FROM users WHERE id = ?;";
 
-    protected String hashPassword(String pass) {
+    public String hashPassword(String pass) {
         return BCrypt.hashpw(pass, BCrypt.gensalt());
     }
 
-    protected Boolean checkPass(int userId, String enteredPass) {
+    public Boolean checkPass(int userId, String enteredPass) {
         User user = readUser(userId);
         return BCrypt.checkpw(enteredPass, user.getPass());
     }
 
-    protected User createUser(User user) {
+    public User createUser(User user) {
         try (PreparedStatement preparedStatement = DbUtil.getConnection().prepareStatement(INSERT_USER, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, user.getFirst_name());
             preparedStatement.setString(2, user.getLast_name());
@@ -57,7 +54,7 @@ public class UserDao {
         }
     }
 
-    protected User readUser(int id) {
+    public User readUser(int id) {
         User user = new User();
         try (PreparedStatement preparedStatement = DbUtil.getConnection().prepareStatement(QUERY_SHOW_USER_BY_ID)) {
             preparedStatement.setInt(1, id);
@@ -72,6 +69,7 @@ public class UserDao {
                 user.setStreet(rsUser.getString(8));
                 user.setStreetNumber(rsUser.getString(9));
             }
+            rsUser.close();
             return user;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -79,7 +77,7 @@ public class UserDao {
         }
     }
 
-    protected List<User> readUsers() {
+    public List<User> readUsers() {
         List<User> users = new ArrayList<>();
         try (PreparedStatement preparedStatement = DbUtil.getConnection().prepareStatement(QUERY_SHOW_USERS);
              ResultSet rsUser = preparedStatement.executeQuery()) {
@@ -93,7 +91,7 @@ public class UserDao {
         }
     }
 
-    protected void updateUser(User user) {
+    public void updateUser(User user) {
         try (PreparedStatement preparedStatement = DbUtil.getConnection().prepareStatement(UPDATE_USER_BY_ID)) {
             preparedStatement.setString(1, user.getFirst_name());
             preparedStatement.setString(2, user.getLast_name());
@@ -110,7 +108,7 @@ public class UserDao {
         }
     }
 
-    protected void updateUserPass(int id, String oldPass, String newPass) {
+    public void updateUserPass(int id, String oldPass, String newPass) {
         try (PreparedStatement preparedStatement = DbUtil.getConnection().prepareStatement(UPDATE_USER_PASS_BY_ID)) {
             if (checkPass(id, oldPass) && !checkPass(id, newPass)) {
                 preparedStatement.setString(1, newPass);
@@ -122,7 +120,7 @@ public class UserDao {
         }
     }
 
-    protected void deleteUser(int id) {
+    public void deleteUser(int id) {
         try (PreparedStatement preparedStatement = DbUtil.getConnection().prepareStatement(DELETE_USER_BY_ID)) {
             preparedStatement.setInt(1, id);
             preparedStatement.executeQuery();
