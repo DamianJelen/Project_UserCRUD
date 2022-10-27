@@ -16,9 +16,7 @@ public class UserAdd extends HttpServlet {
         HttpSession session = request.getSession();
         User user = null;
         if(session.getAttribute("addUser") != null) {
-            System.out.println("Odc att addUser");
             user = (User) session.getAttribute("addUser");
-            System.out.println(user.getFirst_name());
             request.setAttribute("user", user);
             session.removeAttribute("addUser");
         }
@@ -44,7 +42,6 @@ public class UserAdd extends HttpServlet {
             response.sendRedirect("/user/list");
         } else {
             HttpSession session = request.getSession();
-            System.out.println("Utw att addUser");
             session.setAttribute("addUser", user);
             response.sendRedirect("/user/add");
         }
