@@ -15,7 +15,9 @@ public class UsersList extends HttpServlet {
         UserDao userDao = new UserDao();
         List<User> users = userDao.readUsers();
         request.setAttribute("users", users);
-        getServletContext().getRequestDispatcher("/users/list.jsp").forward(request, response);
+//        User user = userDao.readUser(100);
+//        request.setAttribute("user", user);
+        request.getServletContext().getRequestDispatcher("/users/list.jsp").forward(request, response);
     }
 
     @Override

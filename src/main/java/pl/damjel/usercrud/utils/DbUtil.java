@@ -16,9 +16,10 @@ public class DbUtil {
     }
 
     private static DataSource getInstance() {
+        Context initContext = null;
         if(dataSource == null) {
             try {
-                Context initContext = new InitialContext();
+                initContext = new InitialContext();
                 Context envContext = (Context) initContext.lookup("java:/comp/env");
                 dataSource = (DataSource) envContext.lookup("jdbc/users");
             } catch (NamingException e) {

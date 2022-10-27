@@ -40,7 +40,7 @@ public class UserDao {
             preparedStatement.setString(6, user.getZipCode());
             preparedStatement.setString(7, user.getStreet());
             preparedStatement.setString(8, user.getStreetNumber());
-            preparedStatement.setString(9, hashPassword(user.getPass() + user.getEmail()));
+            preparedStatement.setString(9, hashPassword(user.getPass()));
 
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             while (resultSet.next()) {

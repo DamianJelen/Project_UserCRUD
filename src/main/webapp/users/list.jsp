@@ -1,5 +1,5 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ include file="header.jsp" %>
 <!-- DataTales Example -->
 <div class="card shadow mb-4">
@@ -41,8 +41,8 @@
                     <td>${user.last_name}</td>
                     <td>${user.email}</td>
                     <td>${user.phone}</td>
-                    <td>${user.code}</td>
                     <td>${user.zipCode}</td>
+                    <td>${user.city}</td>
                     <td>${user.street}</td>
                     <td>${user.streetNumber}</td>
                 </tr>
