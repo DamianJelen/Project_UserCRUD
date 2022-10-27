@@ -8,8 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDao {
-    private static final String INSERT_USER = "INSERT INTO users (first_name, last_name, email, phone, " +
-            "city, zip_code, street, street_number, pass) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+    private static final String INSERT_USER = "INSERT INTO users (first_name, last_name, email, phone, city, zip_code, street, street_number, pass) VALUE (?, ?, ?, ?, ?, ?, ?, ?, ?);";
     private static final String QUERY_SHOW_USERS = "SELECT id FROM users;";
     private static final String QUERY_SHOW_USER_BY_ID = "SELECT * FROM users WHERE id = ?;";
     private static final String UPDATE_USER_BY_ID = "UPDATE users\n" +
@@ -31,7 +30,7 @@ public class UserDao {
     }
 
     public User createUser(User user) {
-        try (PreparedStatement preparedStatement = DbUtil.getConnection().prepareStatement(INSERT_USER, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement preparedStatement = DbUtil.getConnection().prepareStatement(INSERT_USER/*, Statement.RETURN_GENERATED_KEYS*/)) {
             preparedStatement.setString(1, user.getFirst_name());
             preparedStatement.setString(2, user.getLast_name());
             preparedStatement.setString(3, user.getEmail());
@@ -41,12 +40,12 @@ public class UserDao {
             preparedStatement.setString(7, user.getStreet());
             preparedStatement.setString(8, user.getStreetNumber());
             preparedStatement.setString(9, hashPassword(user.getPass()));
-
-            ResultSet resultSet = preparedStatement.getGeneratedKeys();
-            while (resultSet.next()) {
-                user.setId(resultSet.getInt("id"));
-            }
-            resultSet.close();
+            preparedStatement.executeUpdate();
+//            ResultSet resultSet = preparedStatement.getGeneratedKeys();
+//            while (resultSet.next()) {
+//                user.setId(resultSet.getInt("id"));
+//            }
+//            resultSet.close();
             return user;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
