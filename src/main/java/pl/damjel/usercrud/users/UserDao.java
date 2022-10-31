@@ -59,6 +59,7 @@ public class UserDao {
             preparedStatement.setInt(1, id);
             ResultSet rsUser = preparedStatement.executeQuery();
             while (rsUser.next()) {
+                user.setId(rsUser.getInt(1));
                 user.setFirst_name(rsUser.getString(2));
                 user.setLast_name(rsUser.getString(3));
                 user.setEmail(rsUser.getString(4));
@@ -67,6 +68,7 @@ public class UserDao {
                 user.setZipCode(rsUser.getString(7));
                 user.setStreet(rsUser.getString(8));
                 user.setStreetNumber(rsUser.getString(9));
+                user.setPass(rsUser.getString(10));
             }
             rsUser.close();
             return user;
@@ -122,7 +124,7 @@ public class UserDao {
     public void deleteUser(int id) {
         try (PreparedStatement preparedStatement = DbUtil.getConnection().prepareStatement(DELETE_USER_BY_ID)) {
             preparedStatement.setInt(1, id);
-            preparedStatement.executeQuery();
+            preparedStatement.executeUpdate();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

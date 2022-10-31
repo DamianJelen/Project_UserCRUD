@@ -15,6 +15,10 @@ public class UsersList extends HttpServlet {
         UserDao userDao = new UserDao();
         List<User> users = userDao.readUsers();
         request.setAttribute("users", users);
+
+        HttpSession session = request.getSession();
+        session.removeAttribute("incorrectPass");
+
         request.getServletContext().getRequestDispatcher("/users/list.jsp").forward(request, response);
     }
 
