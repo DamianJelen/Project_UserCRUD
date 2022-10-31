@@ -4,7 +4,7 @@ import javax.servlet.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
 
-@WebFilter(filterName = "DefaultFilter")
+@WebFilter(filterName = "DefaultFilter", urlPatterns = "/user/*")
 public class DefaultFilter implements Filter {
     public void init(FilterConfig config) throws ServletException {
     }
