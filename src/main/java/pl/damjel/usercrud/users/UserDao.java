@@ -109,16 +109,18 @@ public class UserDao {
         }
     }
 
-    public void updateUserPass(int id, String oldPass, String newPass) {
+    public Boolean updateUserPass(int id, String oldPass, String newPass) {
         try (PreparedStatement preparedStatement = DbUtil.getConnection().prepareStatement(UPDATE_USER_PASS_BY_ID)) {
             if (checkPass(id, oldPass) && !checkPass(id, newPass)) {
-                preparedStatement.setString(1, newPass);
+                preparedStatement.setString(1, hashPassword(newPass));
                 preparedStatement.setInt(2, id);
                 preparedStatement.executeUpdate();
+                return true;
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+        return false;
     }
 
     public void deleteUser(int id) {
