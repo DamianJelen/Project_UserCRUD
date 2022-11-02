@@ -30,7 +30,8 @@ public class UserDao {
     }
 
     public User createUser(User user) {
-        try (PreparedStatement preparedStatement = DbUtil.getConnection().prepareStatement(INSERT_USER/*, Statement.RETURN_GENERATED_KEYS*/)) {
+        try (Connection connection = DbUtil.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USER/*, Statement.RETURN_GENERATED_KEYS*/)) {
             preparedStatement.setString(1, user.getFirst_name());
             preparedStatement.setString(2, user.getLast_name());
             preparedStatement.setString(3, user.getEmail());
@@ -55,7 +56,8 @@ public class UserDao {
 
     public User readUser(int id) {
         User user = new User();
-        try (PreparedStatement preparedStatement = DbUtil.getConnection().prepareStatement(QUERY_SHOW_USER_BY_ID)) {
+        try (Connection connection = DbUtil.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(QUERY_SHOW_USER_BY_ID)) {
             preparedStatement.setInt(1, id);
             ResultSet rsUser = preparedStatement.executeQuery();
             while (rsUser.next()) {
@@ -80,10 +82,12 @@ public class UserDao {
 
     public List<User> readUsers() {
         List<User> users = new ArrayList<>();
-        try (PreparedStatement preparedStatement = DbUtil.getConnection().prepareStatement(QUERY_SHOW_USERS);
+        try (Connection connection = DbUtil.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(QUERY_SHOW_USERS);
              ResultSet rsUser = preparedStatement.executeQuery()) {
             while (rsUser.next()) {
-                users.add(readUser(rsUser.getInt("id")));
+                User user = readUser(rsUser.getInt("id"));
+                users.add(user);
             }
             return users;
         } catch (SQLException throwables) {
@@ -93,7 +97,8 @@ public class UserDao {
     }
 
     public void updateUser(User user) {
-        try (PreparedStatement preparedStatement = DbUtil.getConnection().prepareStatement(UPDATE_USER_BY_ID)) {
+        try (Connection connection = DbUtil.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_USER_BY_ID)) {
             preparedStatement.setString(1, user.getFirst_name());
             preparedStatement.setString(2, user.getLast_name());
             preparedStatement.setString(3, user.getEmail());
@@ -110,7 +115,8 @@ public class UserDao {
     }
 
     public Boolean updateUserPass(int id, String oldPass, String newPass) {
-        try (PreparedStatement preparedStatement = DbUtil.getConnection().prepareStatement(UPDATE_USER_PASS_BY_ID)) {
+        try (Connection connection = DbUtil.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_USER_PASS_BY_ID)) {
             if (checkPass(id, oldPass) && !checkPass(id, newPass)) {
                 preparedStatement.setString(1, hashPassword(newPass));
                 preparedStatement.setInt(2, id);
@@ -124,7 +130,8 @@ public class UserDao {
     }
 
     public void deleteUser(int id) {
-        try (PreparedStatement preparedStatement = DbUtil.getConnection().prepareStatement(DELETE_USER_BY_ID)) {
+        try (Connection connection = DbUtil.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_USER_BY_ID)) {
             preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
         } catch (SQLException throwables) {
